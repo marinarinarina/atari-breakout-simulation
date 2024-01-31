@@ -4,10 +4,45 @@
 		<meta charset="UTF-8" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>atari breakout simulation</title>
+		<title>Atari Breakout Simulation</title>
 	</head>
 	<body>
-		<div id="app"></div>
+		<div class="wrapper">
+			<canvas id="canvas" class="canvas"></canvas>
+			<div class="score-wrapper">
+				<span id="leftScore" class="score color-right">130</span>
+				<span id="vs" class="score vs">✕</span>
+				<span id="rightScore" class="score color-left">130</span>
+			</div>
+			<section class="speed-section">
+				<div class="speed-player">
+					<span class="color-left speed-player-name">yellow</span>
+					<div class="speed-controls">
+						<label class="speed-label">
+							<span class="speed-axis">horizontal speed</span>
+							<input class="js-speed-input" data-player="left" data-axis="x" type="range" step="0.1" min="1" max="10" />
+						</label>
+						<label class="speed-label">
+							<span class="speed-axis">vertical speed</span>
+							<input class="js-speed-input" data-player="left" data-axis="y" type="range" step="0.1" min="1" max="10" />
+						</label>
+					</div>
+				</div>
+				<div class="speed-player">
+					<span class="color-right speed-player-name">purple</span>
+					<div class="speed-controls">
+						<label class="speed-label">
+							<span class="speed-axis">horizontal speed</span>
+							<input class="js-speed-input" data-player="right" data-axis="x" type="range" min="1" max="10" value="5" />
+						</label>
+						<label class="speed-label">
+							<span class="speed-axis">vertical speed</span>
+							<input class="js-speed-input" data-player="right" data-axis="y" type="range" min="1" max="10" value="5" />
+						</label>
+					</div>
+				</div>
+			</section>
+		</div>
 		<script type="module" src="/src/main.ts"></script>
 	</body>
 </html>
