@@ -1,9 +1,28 @@
 import './style.css';
-import { Engine, Render, Runner, Composite, Bodies, Events, Vector, Body, type IEventCollision } from 'matter-js';
+import {
+	Engine,
+	Render,
+	Runner,
+	Composite,
+	Bodies,
+	Events,
+	Vector,
+	Body,
+	type IEventCollision,
+	type Pair,
+} from 'matter-js';
 import { createField, type FieldBlock } from './components/Field';
-import { createPlayer } from './components/Player';
-import { config, playerNames, type PlayerName } from './setting';
+import { createPlayer, type Player } from './components/Player';
+import { config } from './setting';
 import { randomInteger } from './utils';
+import { gameManager } from './gameManager';
+
+gameManager.initScore({
+	left: config.field.sideLength ** 2 / 2,
+	right: config.field.sideLength ** 2 / 2,
+});
+
+gameManager.handleScoreUpdate();
 
 const canvas = document.querySelector<HTMLCanvasElement>('#canvas')!;
 const [width, height] = [canvas.offsetWidth, canvas.offsetHeight];
@@ -38,7 +57,8 @@ Composite.add(world, [
 ]);
 
 const blockPxSize = width / config.field.sideLength;
-const [minSpeed, maxSpeed] = [0, Math.floor(blockPxSize / 2)];
+// const [minSpeed, maxSpeed] = [0, Math.floor(blockPxSize / 2)];
+const maxSpeed = Math.floor(blockPxSize / 2);
 
 const playerLeft = createPlayer(
 	world,
@@ -56,6 +76,43 @@ const playerRight = createPlayer(
 	'right'
 );
 
+const bodyToPlayer = new Map<Body, Player>([
+	[playerLeft.getBody(), playerLeft],
+	[playerRight.getBody(), playerRight],
+]);
+
 function handleCollisionCaptures(event: IEventCollision<Engine>) {
-	console.log(event.pairs);
+	const playerFieldPairs = getPlayerFieldBlockPairs(event.pairs);
+	if (playerFieldPairs.length === 0) return;
+	const { player, block } = playerFieldPairs[0];
+
+	if (player.getName() === 'left') {
+		gameManager.updateScore('+LEFT');
+		gameManager.updateScore('-RIGHT');
+	} else {
+		gameManager.updateScore('-LEFT');
+		gameManager.updateScore('+RIGHT');
+	}
+	gameManager.handleScoreUpdate();
+
+	block.capture(player.getName());
+}
+
+function getPlayerFieldBlockPairs(pairs: Pair[]) {
+	const playerFieldPairs: { player: Player; block: FieldBlock }[] = [];
+	pairs.forEach(({ bodyA, bodyB }) => {
+		let player: Player | undefined = undefined;
+		let block: FieldBlock | undefined = undefined;
+		for (const body of [bodyA, bodyB]) {
+			if (bodyToPlayer.has(body)) {
+				player = bodyToPlayer.get(body)!;
+			} else if (field.getBodiesToBlock().has(body)) {
+				block = field.getBodiesToBlock().get(body)!;
+			}
+		}
+		if (block && player) {
+			playerFieldPairs.push({ player, block });
+		}
+	});
+	return playerFieldPairs;
 }

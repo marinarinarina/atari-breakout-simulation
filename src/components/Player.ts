@@ -2,7 +2,9 @@ import { Bodies, Body, World, type Vector } from 'matter-js';
 import { config, type PlayerName, COLLISION_CATEGORY } from '../setting';
 import { getOpponentName } from '../utils';
 
-function createPlayer(world: World, position: Vector, velocity: Vector, size: number, name: PlayerName) {
+export type Player = ReturnType<typeof createPlayer>;
+
+export function createPlayer(world: World, position: Vector, velocity: Vector, size: number, name: PlayerName) {
 	let _body: Body;
 	let _name = name;
 
@@ -23,5 +25,3 @@ function createPlayer(world: World, position: Vector, velocity: Vector, size: nu
 
 	return { getBody, getName };
 }
-
-export { createPlayer };

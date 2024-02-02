@@ -28,9 +28,9 @@ function generateFieldBlock(world: World, position: Vector, owner: PlayerName, s
 
 	_body = Bodies.rectangle(position.x, position.y, size + 1, size + 1, {
 		isStatic: true,
-		collisionFilter: { category: COLLISION_CATEGORY[getOpponentName(owner)] },
+		collisionFilter: { category: COLLISION_CATEGORY[_owner] },
 		render: {
-			fillStyle: config.colors[getOpponentName(owner)],
+			fillStyle: config.colors[getOpponentName(_owner)],
 		},
 	});
 

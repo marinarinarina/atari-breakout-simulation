@@ -10,4 +10,8 @@ function randomInteger(min: number, max: number) {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-export { getOpponentName, randomInteger };
+function handleError(value: never) {
+	throw new Error('An error has occurred: ' + value);
+}
+
+export { getOpponentName, randomInteger, handleError };
