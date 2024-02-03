@@ -15,7 +15,7 @@ import { PlayerName, config } from './setting';
 import { createField, type FieldBlock } from './components/Field';
 import { createPlayer, type Player } from './components/Player';
 import { gameManager } from './gameManager';
-import { randomInteger, handleError } from './utils';
+import { randomInteger } from './utils';
 
 gameManager.initScore({
 	left: config.field.sideLength ** 2 / 2,
@@ -100,18 +100,12 @@ function handleCollisionCaptures(event: IEventCollision<Engine>) {
 	if (playerFieldPairs.length === 0) return;
 	const { player, block } = playerFieldPairs[0];
 	const playerName = player.getName();
-	switch (playerName) {
-		case 'left':
-			gameManager.updateScore('+LEFT');
-			gameManager.updateScore('-RIGHT');
-			break;
-		case 'right':
-			gameManager.updateScore('-LEFT');
-			gameManager.updateScore('+RIGHT');
-			break;
-		default: {
-			return handleError(playerName);
-		}
+	if (playerName === 'left') {
+		gameManager.updateScore('+LEFT');
+		gameManager.updateScore('-RIGHT');
+	} else {
+		gameManager.updateScore('-LEFT');
+		gameManager.updateScore('+RIGHT');
 	}
 	gameManager.handleScoreUpdate();
 	block.capture(player.getName());
