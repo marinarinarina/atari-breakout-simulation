@@ -11,11 +11,11 @@ import {
 	type IEventCollision,
 	type Pair,
 } from 'matter-js';
+import { config } from './setting';
 import { createField, type FieldBlock } from './components/Field';
 import { createPlayer, type Player } from './components/Player';
-import { config } from './setting';
-import { randomInteger } from './utils';
 import { gameManager } from './gameManager';
+import { randomInteger } from './utils';
 
 gameManager.initScore({
 	left: config.field.sideLength ** 2 / 2,
@@ -57,8 +57,7 @@ Composite.add(world, [
 ]);
 
 const blockPxSize = width / config.field.sideLength;
-// const [minSpeed, maxSpeed] = [0, Math.floor(blockPxSize / 2)];
-const maxSpeed = Math.floor(blockPxSize / 2);
+const [minSpeed, maxSpeed] = [0, Math.floor(blockPxSize / 2)];
 
 const playerLeft = createPlayer(
 	world,

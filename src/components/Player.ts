@@ -1,5 +1,5 @@
 import { Bodies, Body, World, type Vector } from 'matter-js';
-import { config, type PlayerName, COLLISION_CATEGORY } from '../setting';
+import { config, COLLISION_CATEGORY, type PlayerName } from '../setting';
 import { getOpponentName } from '../utils';
 
 export type Player = ReturnType<typeof createPlayer>;

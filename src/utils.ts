@@ -1,4 +1,4 @@
-import { PlayerName } from './setting';
+import { type PlayerName } from './setting';
 
 function getOpponentName(name: PlayerName): PlayerName {
 	return name === 'left' ? 'right' : 'left';
