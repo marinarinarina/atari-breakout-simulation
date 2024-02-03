@@ -11,11 +11,11 @@ import {
 	type IEventCollision,
 	type Pair,
 } from 'matter-js';
-import { config } from './setting';
+import { PlayerName, config } from './setting';
 import { createField, type FieldBlock } from './components/Field';
 import { createPlayer, type Player } from './components/Player';
 import { gameManager } from './gameManager';
-import { randomInteger } from './utils';
+import { randomInteger, handleError } from './utils';
 
 gameManager.initScore({
 	left: config.field.sideLength ** 2 / 2,
@@ -24,6 +24,7 @@ gameManager.initScore({
 
 gameManager.handleScoreUpdate();
 
+const speedInputs = document.querySelectorAll<HTMLInputElement>('.js-speed-input');
 const canvas = document.querySelector<HTMLCanvasElement>('#canvas')!;
 const [width, height] = [canvas.offsetWidth, canvas.offsetHeight];
 
@@ -40,21 +41,17 @@ const render = Render.create({
 		wireframes: false,
 	},
 });
-
-Render.run(render);
-
-Runner.run(runner, engine);
-
 const field = createField(world, config.field.sideLength, width / config.field.sideLength);
 
-Events.on(engine, 'collisionEnd', (event) => handleCollisionCaptures(event));
-
+Render.run(render);
+Runner.run(runner, engine);
 Composite.add(world, [
 	Bodies.rectangle(-2.5, height / 2, 5, height, { isStatic: true }),
 	Bodies.rectangle(width + 2.5, height / 2, 5, height, { isStatic: true }),
 	Bodies.rectangle(width / 2, -2.5, width, 5, { isStatic: true }),
 	Bodies.rectangle(width / 2, height + 2.5, width, 5, { isStatic: true }),
 ]);
+Events.on(engine, 'collisionEnd', (event) => handleCollisionCaptures(event));
 
 const blockPxSize = width / config.field.sideLength;
 const [minSpeed, maxSpeed] = [0, Math.floor(blockPxSize / 2)];
@@ -80,20 +77,43 @@ const bodyToPlayer = new Map<Body, Player>([
 	[playerRight.getBody(), playerRight],
 ]);
 
+speedInputs.forEach((inputElem) => {
+	const playerName = inputElem.dataset.player as PlayerName;
+	const player = playerName === 'left' ? playerLeft : playerRight;
+	const axis = inputElem.dataset.axis as 'x' | 'y';
+	const playerBody = player.getBody();
+
+	inputElem.min = String(minSpeed);
+	inputElem.max = String(maxSpeed);
+	inputElem.value = String(playerBody.velocity[axis]);
+
+	inputElem.addEventListener('input', () => {
+		const speed = Number(inputElem.value);
+		const velocity = Vector.clone(playerBody.velocity);
+		velocity[axis] = speed;
+		Body.setVelocity(playerBody, velocity);
+	});
+});
+
 function handleCollisionCaptures(event: IEventCollision<Engine>) {
 	const playerFieldPairs = getPlayerFieldBlockPairs(event.pairs);
 	if (playerFieldPairs.length === 0) return;
 	const { player, block } = playerFieldPairs[0];
-
-	if (player.getName() === 'left') {
-		gameManager.updateScore('+LEFT');
-		gameManager.updateScore('-RIGHT');
-	} else {
-		gameManager.updateScore('-LEFT');
-		gameManager.updateScore('+RIGHT');
+	const playerName = player.getName();
+	switch (playerName) {
+		case 'left':
+			gameManager.updateScore('+LEFT');
+			gameManager.updateScore('-RIGHT');
+			break;
+		case 'right':
+			gameManager.updateScore('-LEFT');
+			gameManager.updateScore('+RIGHT');
+			break;
+		default: {
+			return handleError(playerName);
+		}
 	}
 	gameManager.handleScoreUpdate();
-
 	block.capture(player.getName());
 }
 
