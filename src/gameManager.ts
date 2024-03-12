@@ -1,7 +1,9 @@
-import { handleError } from './utils';
+import { type Score, type PlayerName } from './setting';
 
-export type Score = { left: number; right: number };
-
+/*
+ ** 게임매니저는 게임 시작과 동시에 점수를 기록하고 ui를 업데이트한다.
+ ** 게임 시작과 동시에 딱 한 번만 실행되기 때문에 모듈 패턴을 사용했다.
+ */
 export const gameManager = (function (leftScore: HTMLSpanElement, rightScore: HTMLSpanElement) {
 	const _leftScore = leftScore;
 	const _rightScore = rightScore;
@@ -11,30 +13,20 @@ export const gameManager = (function (leftScore: HTMLSpanElement, rightScore: HT
 		_score = score;
 	};
 
-	const updateScore = (action: '+LEFT' | '-LEFT' | '+RIGHT' | '-RIGHT') => {
-		switch (action) {
-			case '+LEFT':
-				_score.left += 1;
-				break;
-			case '-LEFT':
-				_score.left -= 1;
-				break;
-			case '+RIGHT':
-				_score.right += 1;
-				break;
-			case '-RIGHT':
-				_score.right -= 1;
-				break;
-			default: {
-				return handleError(action);
-			}
+	const updateScore = (winner: PlayerName) => {
+		if (winner === 'left') {
+			_score.left += 1;
+			_score.right -= 1;
+		} else if (winner === 'right') {
+			_score.right += 1;
+			_score.left -= 1;
 		}
 	};
 
-	const handleScoreUpdate = () => {
+	const updateScoreUI = () => {
 		_leftScore.innerText = String(_score.left);
 		_rightScore.innerText = String(_score.right);
 	};
 
-	return { initScore, updateScore, handleScoreUpdate };
+	return Object.freeze({ initScore, updateScore, updateScoreUI });
 })(document.querySelector<HTMLSpanElement>('#leftScore')!, document.querySelector<HTMLSpanElement>('#rightScore')!);
