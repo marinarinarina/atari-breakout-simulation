@@ -8,11 +8,7 @@
 ### 만들게 된 계기
 ![image](https://github.com/marinarinarina/atari-breakout-simulation/assets/119808319/7cec8fa1-9ab9-4cd8-ac82-a95493f8fa81)
 
-레딧에서 어떤 유저가 자기 회사의 클라이언트가 위처럼 생긴 2인용 벽돌깨기 시뮬레이션을 만들어달라고 요청했는데
-
-도대체 어떻게 만들어야 할지 모르겠다는 글이 올라왔다.
-
-댓글을 읽어보니 캔버스 API와 물리엔진 라이브러리를 사용하라고 나와있었다.
+클라이언트가 위처럼 생긴 2인용 벽돌깨기 시뮬레이션을 만들어달라고 요청했는데 도대체 어떻게 만들어야 할지 모르겠다는 요청을 받았다.
 
 이 글을 읽었을 당시 나는 불과 몇 일 전까지 캔버스 API를 공부하기위해 간단한 [공튀기기 인터랙션](https://github.com/marinarinarina/canvasAPI-bounceBall)을 만들고 있었고
 
